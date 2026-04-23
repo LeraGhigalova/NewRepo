@@ -1,34 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace UniversityLibrary
 {
-    public class Student
+    public class Student : IComparable<Student>
     {
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Group { get; set; }
         public string Institute { get; set; }
-
         public readonly string StudentIdNumber;
         public readonly EducationLevel Level;
 
-        public Student(
-            string name,
-            string surname,
-            string StudentIdNumber,
-            string group,
-            string insitute,
-            EducationLevel level)
+        public Student(string name, string surname, string studentIdNumber, string group, string institute, EducationLevel level)
         {
             Name = name;
             Surname = surname;
+            StudentIdNumber = studentIdNumber;
             Group = group;
-            Institute = Institute;
+            Institute = institute;
             Level = level;
         }
 
@@ -36,25 +25,52 @@ namespace UniversityLibrary
         {
             string[] info = new string[2];
             info[0] = $"{Name} {Surname}";
-            string LevelText;
+            string levelText;
             switch (Level)
             {
                 case EducationLevel.Bachelor:
-                    LevelText = "бакалавриат";
+                    levelText = "бакалавриат";
                     break;
                 case EducationLevel.Specialist:
-                    LevelText = "специалитет";
+                    levelText = "специалитет";
                     break;
                 case EducationLevel.Master:
-                    LevelText = "магистратура";
+                    levelText = "магистратура";
                     break;
                 default:
-                    LevelText = "не указано";
+                    levelText = "не указано";
                     break;
-            };
+            }
+            info[1] = $"Зачётная книжка: {StudentIdNumber}. Группа: {Group}. Институт: {Institute}. Уровень: {levelText}";
+            return info;
+        }
 
-            info[1] = $"Зачётная книжка: {StudentIdNumber}. Группа: {Group}. Институт: {Institute}. Направление:{LevelText}.";
-            return info; 
+        public int CompareTo(Student other)
+        {
+            if (other == null) return 1;
+
+            int surnameComparison = Surname.CompareTo(other.Surname);
+            if (surnameComparison != 0)
+                return surnameComparison;
+
+            return Name.CompareTo(other.Name);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Student other)
+                return StudentIdNumber == other.StudentIdNumber;
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return StudentIdNumber?.GetHashCode() ?? 0;
         }
     }
 }
+
+
+
+
+
